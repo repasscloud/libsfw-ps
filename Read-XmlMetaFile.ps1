@@ -6,7 +6,7 @@ function Read-XmlMetaFile {
     
     begin {
         [System.String]$XmlDLPath = "$env:TEMP\nuspec.xml"
-        [System.String]$AgentString = ' Mozilla/5.0 (compatible; MSIE 9.0; Windows NT; Windows NT 10.0; en-US)'
+        [System.String]$AgentString = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT; Windows NT 10.0; en-US)'
     }
     
     process {
@@ -22,13 +22,13 @@ function Read-XmlMetaFile {
             [xml]$x = Get-Content -Path $XmlDLPath
 
             # meta data
-            if ($null -ne $x.package.metadata.projectUrl) { [System.String]$homepage = $x.package.metadata.projectUrl } else { [System.String]$homepage = '' }
-            if ($null -ne $x.package.metadata.iconUrl) { [System.String]$icon = $x.package.metadata.iconUrl } else { [System.String]$icon = '' }
-            if ($null -ne $x.package.metadata.copyright) { [System.String]$copyright = $x.package.metadata.copyright } else { [System.String]$copyright = '' }
-            if ($null -ne $x.package.metadata.licenseUrl) { [System.String]$license = $x.package.metadata.licenseUrl } else { [System.String]$license = '' }
-            if ($null -ne $x.package.metadata.docsUrl) { [System.String]$docs = $x.package.metadata.docsUrl } else { [System.String]$docs = '' }
-            if ($null -ne $x.package.metadata.tags) { [System.String]$tags = $x.package.metadata.tags } else { [System.String]$tags = '' }
-            if ($null -ne $x.package.metadata.summary) { [System.String]$summary = $x.package.metadata.summary } else { [System.String]$summary = '' }
+            if ($null -ne $x.package.metadata.projectUrl) { [System.String]$Homepage = $x.package.metadata.projectUrl } else { [System.String]$Homepage = '' }
+            if ($null -ne $x.package.metadata.iconUrl) { [System.String]$Icon = $x.package.metadata.iconUrl } else { [System.String]$Icon = '' }
+            if ($null -ne $x.package.metadata.copyright) { [System.String]$Copyright = $x.package.metadata.copyright } else { [System.String]$Copyright = '' }
+            if ($null -ne $x.package.metadata.licenseUrl) { [System.String]$License = $x.package.metadata.licenseUrl } else { [System.String]$License = '' }
+            if ($null -ne $x.package.metadata.docsUrl) { [System.String]$Docs = $x.package.metadata.docsUrl } else { [System.String]$Docs = '' }
+            if ($null -ne $x.package.metadata.tags) { [System.String]$Tags = $x.package.metadata.tags } else { [System.String]$Tags = '' }
+            if ($null -ne $x.package.metadata.summary) { [System.String]$Summary = $x.package.metadata.summary } else { [System.String]$Summary = '' }
 
             if (Test-Path -Path $XmlDLPath) { Remove-Item -Path $XmlDLPath -Confirm:$false -Force }
         }
@@ -37,19 +37,19 @@ function Read-XmlMetaFile {
             $wc.Dispose()
 
             # meta data
-            [System.String]$homepage =  [System.String]::Empty
-            [System.String]$icon = [System.String]::Empty
-            [System.String]$copyright = [System.String]::Empty
-            [System.String]$license = [System.String]::Empty
-            [System.String]$docs = [System.String]::Empty
-            [System.String]$tags = [System.String]::Empty
-            [System.String]$summary = [System.String]::Empty
+            [System.String]$Homepage =  [System.String]::Empty
+            [System.String]$Icon = [System.String]::Empty
+            [System.String]$Copyright = [System.String]::Empty
+            [System.String]$License = [System.String]::Empty
+            [System.String]$Docs = [System.String]::Empty
+            [System.String]$Tags = [System.String]::Empty
+            [System.String]$Summary = [System.String]::Empty
         }
 
         # bundle the data into an array to be returned
-        [System.Array]$returnArray = @($homepage, $icon, $copyright, $license, $docs, $tags, $summary)
+        [System.Array]$ReturnArray = @($Homepage, $Icon, $Copyright, $License, $Docs, $Tags, $Summary)
 
-        return $returnArray
+        return $ReturnArray
     }
     
     end {
