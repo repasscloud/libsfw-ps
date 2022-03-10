@@ -1,7 +1,0 @@
-*.tmp
-mc-config.json
-_tmp/*
-var.ps1
-lib/functions/.git
-scan_type_01.ps1
-scan_type_02.ps1
