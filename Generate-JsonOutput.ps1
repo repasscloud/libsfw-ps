@@ -6,9 +6,11 @@ function Export-JsonOutput {
         [System.String]$IconUri,
         [System.String]$Copyright,
         [System.String]$License,
+        [System.Bool]$LicenseAcceptRequired=$false,
         [System.String]$Docs,
         [System.String]$Tags,
         [System.String]$Summary,
+        [Required]
         [ValidateSet("True","False")]
         [System.String]$RebootRequired,
         [System.String]$Depends,
@@ -39,7 +41,7 @@ function Export-JsonOutput {
         [System.String]$Geo,
         [System.String]$UninstallString,
         [System.String]$UninstallArgs,
-        [System.String]$SysInfo="4.4.0.1"
+        [System.String]$SysInfo="4.4.0.2"  # licenseacceptrequired
 
     )
     
@@ -76,6 +78,10 @@ function Export-JsonOutput {
             {
                 Write-Output "Version info cannot be confirmed"
             }
+        }
+        else
+        {
+            Write-Output "Nuspec URI not provided"    
         }
 
         if ($null -notlike $Version)
