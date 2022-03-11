@@ -1,65 +1,50 @@
 function Export-JsonManifestV2 {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("Productivity")]
-        [System.String]$Category,                                   #^ select from categories
-        [Parameter(Mandatory=$true)]
-        [System.String]$Publisher,                                  #^ publisher name
-        [Parameter(Mandatory=$true)]
-        [System.String]$Name,                                       #^ application name
-        [Parameter(Mandatory=$true)]
-        [System.String]$Version,                                    #^ application version
-        [System.String]$Copyright=[System.String]::Empty,           # copyright notice
+        [Parameter(Mandatory=$true)][ValidateSet("Productivity")][System.String]$Category,                                   #^ select from categories
+        [Parameter(Mandatory=$true)][System.String]$Publisher,                                  #^ publisher name
+        [Parameter(Mandatory=$true)][System.String]$Name,                                       #^ application name
+        [Parameter(Mandatory=$true)][System.String]$Version,                                    #^ application version
+        [System.String]$Copyright,           # copyright notice
         [System.Boolean]$LicenseAcceptRequired=$false,              # should default to true only if is required
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("x64","x86")]
-        [System.String]$Arch,                                       #^ architecture of cpu
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("Exe","Msi")]
+        [Parameter(Mandatory=$true)][ValidateSet("x64","x86")][System.String]$Arch,                                       #^ architecture of cpu
+        [Parameter(Mandatory=$true)][ValidateSet("Exe","Msi")]
         [System.String]$ExecType,                                   #^ executable type
-        [System.String]$FileName=[System.String]::Empty,            # file name
-        [System.String]$SHA256=[System.String]::Empty,              # sha256 hash
-        [Parameter(Mandatory=$true)]                         
-        [System.String]$FollowUri,                                  #^ uri provided to search for
-        [System.String]$AbsoluteUri=[System.String]::Empty,         # the follow_on uri found
-        [System.String]$InstallSwitches=[System.String]::Empty,     # which install switches
-        [System.String]$DisplayName=[System.String]::Empty,         # registry display name (should be provided to identify)
-        [System.String]$DisplayPublisher=[System.String]::Empty,    # registry display publisher
-        [System.String]$DisplayVersion=[System.String]::Empty,      # registry display version
-        [System.String]$DetectMethod=[System.String]::Empty,        # how is app detected (registry, fileversion, filematched)
-        [System.String]$DetectValue=[System.String]::Empty,         # the value for the type
-        [System.String]$UninstallProcess=[System.String]::Empty,    # exe, exe2, msi, etc
-        [System.String]$UninstallString=[System.String]::Empty,     # how is the uninstall proceessed (used in conjunction with above)
-        [System.String]$UninstallArgs=[System.String]::Empty,       # any arguments to be provided to uninstaller (not for MSI usually)
-        [System.String]$Homepage=[System.String]::Empty,            # URL of application
-        [System.String]$IconUri=[System.String]::Empty,             # icon for optechx portal
-        [System.String]$Docs=[System.String]::Empty,                # documentation link
-        [System.String]$License=[System.String]::Empty,             # link to license or type of license
-        [System.String[]]$Tags=[System.String]::Empty,              # list of tags
-        [System.String]$Summary=[System.String]::Empty,             # summary of application 
+        [System.String]$FileName,            # file name
+        [System.String]$SHA256,              # sha256 hash
+        [Parameter(Mandatory=$true)][System.String]$FollowUri,                                  #^ uri provided to search for
+        [System.String]$AbsoluteUri,         # the follow_on uri found
+        [System.String]$InstallSwitches,     # which install switches
+        [System.String]$DisplayName,         # registry display name (should be provided to identify)
+        [System.String]$DisplayPublisher,    # registry display publisher
+        [System.String]$DisplayVersion,      # registry display version
+        [System.String]$DetectMethod,        # how is app detected (registry, fileversion, filematched)
+        [System.String]$DetectValue,         # the value for the type
+        [System.String]$UninstallProcess,    # exe, exe2, msi, etc
+        [System.String]$UninstallString,     # how is the uninstall proceessed (used in conjunction with above)
+        [System.String]$UninstallArgs,       # any arguments to be provided to uninstaller (not for MSI usually)
+        [System.String]$Homepage,            # URL of application
+        [System.String]$IconUri,             # icon for optechx portal
+        [System.String]$Docs,                # documentation link
+        [System.String]$License,             # link to license or type of license
+        [System.String[]]$Tags,              # list of tags
+        [System.String]$Summary,             # summary of application 
         [System.Boolean]$RebootRequired=$false,                     # is a reboot required
-        [Parameter(Mandatory=$true)]
-        [System.String]$LCID,                                       #^ language being supported here
-        [ValidateSet("mc","ftp","http","other")]
-        [System.String]$XFT,                                        # transfer protocol (mc, ftp, http, etc)
+        [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here
+        [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                                        # transfer protocol (mc, ftp, http, etc)
         [ValidateSet("au-syd1-07")]
         [System.String]$Locale,                                     #
-        [System.String]$RepoGeo=[System.String]::Empty,             #
-        [System.String]$Uri_Path=[System.String]::Empty,            # 
+        [System.String]$RepoGeo,             #
+        [System.String]$Uri_Path,            # 
         [System.Boolean]$Enabled=$true,                             # 
-        [System.String[]]$DependsOn=[System.String]::Empty,         # 
-        [System.String]$NuspecUri=[System.String]::Empty,           # 
+        [System.String[]]$DependsOn,         # 
+        [System.String]$NuspecUri,           # 
         [System.Version]$SysInfo="4.5.0.0",                         # JSON Specification
-        [Parameter(Mandatory=$true)]
-        [System.String]$OutPath
+        [Parameter(Mandatory=$true)][System.String]$OutPath
     )
     
-    BEGIN {
+    begin {
         <# PRELOAD - DO NOT EDIT #>
-        [System.Guid]$Guid=[System.Guid]::NewGuid().Guid,           # auto-generated
-        [System.String]$UID=[System.String]::Empty,                 # UID ISO:1005 <publisher>.<app_name>_<version>_<arch>_<exe_type>_<lcid> (ie - google-chrome-94.33.110.22-x64-msi_en-US)
-        [System.String]$Key=[System.String]::Empty,                 # auto-generated
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
         $userAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
 
@@ -118,7 +103,11 @@ function Export-JsonManifestV2 {
         }
     }
     
-    PROCESS {
+    process {
+        [System.Guid]$Guid = [System.Guid]::NewGuid().Guid  # auto-generated
+        [System.String]$UID                                 # UID ISO:1005 <publisher>.<app_name>_<version>_<arch>_<exe_type>_<lcid> (ie - google-chrome-94.33.110.22-x64-msi_en-US)
+        [System.String]$Key                                 # auto-generated
+
         <# JSON DATA STRUCTURE - DO NOT EDIT #>
         $JsonDict = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.id = [System.Collections.Specialized.OrderedDictionary]@{}
@@ -238,7 +227,7 @@ function Export-JsonManifestV2 {
         #endregion BUILD JSON
     }
     
-    END {
+    end {
         [System.GC]::Collect()
     }
 }
