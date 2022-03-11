@@ -7,7 +7,7 @@ function Build-JsonFiles {
     # declare error action
     $ErrorActionPreference = "Stop"
 
-    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" | Select-Object FullName,Name
+    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse | Select-Object FullName,Name
     
     foreach ($ps1 in $PS1SrcFiles)
     {
