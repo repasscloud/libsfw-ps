@@ -11,11 +11,13 @@ function Get-RedirectedUrl {
     try
     {
         $response = $request.GetResponse()
-        $response.ResponseUri.AbsoluteUri
+        $returnValue = $response.ResponseUri.AbsoluteUri
         $response.Close()
     }
     catch
     {
         "Error: $_"
     }
+
+    return $returnValue
 }

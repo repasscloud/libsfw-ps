@@ -43,6 +43,6 @@ function Get-RedirectedUri {
             }
         } while ($retry)
  
-        $redirectUri
+        return $redirectUri
     }
 }
