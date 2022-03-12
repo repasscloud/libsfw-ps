@@ -120,9 +120,10 @@ function Export-JsonManifestV2 {
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         $DownloadFilePath = "$env:TMP\$FileName"
 
-        $task = (New-Object Net.WebClient).DownloadFileAsync($AbsoluteUri, $DownloadFilePath)
-        while (-not $task.AsyncWaitHandle.WaitOne(200)) { }
-        $null = $task.GetAwaiter().GetResult()
+        Start-Job -Name X1 -ScriptBlock { (New-Object Net.WebClient).DownloadFileAsync($AbsoluteUri, $DownloadFilePath) }
+        Start-Sleep -Seconds 5
+        Get-Job
+        
 
 
         
