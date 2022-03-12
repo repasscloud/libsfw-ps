@@ -120,6 +120,7 @@ function Export-JsonManifestV2 {
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         $DownloadFilePath = "$env:TMP\$FileName"
 
+        & optechx.DownloadFile.exe $AbsoluteUri $DownloadFilePath
         
         Test-Path $DownloadFilePath
 
