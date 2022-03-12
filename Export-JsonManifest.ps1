@@ -139,7 +139,7 @@ function Export-JsonManifest {
 
         try
         {
-            & dotnet "C:\odf\odf.dll" $AbsoluteUri $DownloadFilePath
+            & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
         }
         catch
         {
