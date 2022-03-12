@@ -118,7 +118,9 @@ function Export-JsonManifestV2 {
         $WebRequest = $WebRequestQuery.GetResponse()
         $DLFileBytesSize = $WebRequest.ContentLength
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
-        Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
+        $DownloadFilePath = "$env:TMP\$FileName"
+        (New-Object Net.WebClient).DownloadFile($AbsoluteUri, $DownloadFilePath)
+        #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
         $Locale = "au-syd1-07"
         $Uri_Path = "apps/${Publisher}/${Name}/${Version}/${Arch}/${FileName}"
