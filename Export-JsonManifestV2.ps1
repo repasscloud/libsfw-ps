@@ -120,9 +120,7 @@ function Export-JsonManifestV2 {
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         $DownloadFilePath = "$env:TMP\$FileName"
 
-        #Start-Job -Name X1 -ScriptBlock { (New-Object Net.WebClient).DownloadFileAsync($AbsoluteUri, $DownloadFilePath) }
-        $ProgressPreference = 'SilentlyContinue'
-        Invoke-WebRequest -Uri $AbsoluteUri -OutFile $DownloadFilePath -UseBasicParsing
+        
         Test-Path $DownloadFilePath
 
 
