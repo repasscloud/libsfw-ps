@@ -121,8 +121,8 @@ function Export-JsonManifestV2 {
         $DownloadFilePath = "$env:TMP\$FileName"
 
         #Start-Job -Name X1 -ScriptBlock { (New-Object Net.WebClient).DownloadFileAsync($AbsoluteUri, $DownloadFilePath) }
-        Start-Job -Name X1 -ScriptBlock { $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri $AbsoluteUri -OutFile $DownloadFilePath -UseBasicParsing }
-        Get-Job | Wait-Job
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $AbsoluteUri -OutFile $DownloadFilePath -UseBasicParsing }
         Test-Path $DownloadFilePath
 
 
