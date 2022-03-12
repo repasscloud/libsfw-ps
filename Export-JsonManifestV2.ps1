@@ -99,6 +99,11 @@ function Export-JsonManifestV2 {
             Write-Output "Nuspec URI not provided"    
         }
         #endregion NUSPEC
+
+        #region UID_KEY
+        $UID = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))_${Version}_${Arch}_${ExecType}_${LCID}"
+        $Key = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))"
+        #endregion UID_KEY
         
         #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
         Write-Output "FollowUri is: [${FollowUri}]"
@@ -110,7 +115,16 @@ function Export-JsonManifestV2 {
             }
             catch {
                 Write-Output "FollowUri not found: [${FollowUri}]"
-                Start-Sleep -Seconds 3
+                $Body = @{
+                    title  = "FollowUri Not Found: ${Key}"
+                    body   = "FollowUri not found: $FollowUri`r`n`r`n${UID}"
+                    labels = @("ci-followuri-not-found")
+                } | ConvertTo-Json
+                $Headers = @{Authorization = 'token ' + $Env:GH_TOKEN}
+                $owner = "repasscloud"
+                $repository = "libsfw"
+                $NewIssue = Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$owner/$repository/issues" -Body $Body -Headers $Headers -ContentType "application/json"
+                $NewIssue.html_url
                 exit 1
             }
         }
@@ -127,18 +141,12 @@ function Export-JsonManifestV2 {
 
         Test-Path $DownloadFilePath
 
-
         
         #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
         $Locale = "au-syd1-07"
         $Uri_Path = "apps/${Publisher}/${Name}/${Version}/${Arch}/${FileName}"
         #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
-
-        #region UID_KEY
-        $UID = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))_${Version}_${Arch}_${ExecType}_${LCID}"
-        $Key = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))"
-        #endregion UID_KEY
 
         #region BUILD JSON
         $JsonDict.guid = $Guid.ToString()
