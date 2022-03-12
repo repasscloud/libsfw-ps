@@ -7,15 +7,15 @@ function Build-JsonFiles {
     # declare error action
     $ErrorActionPreference = "Stop"
 
-    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse
+    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse | Select-Object -ExpandProperty FullName
     
-    foreach ($ps1 in $PS1SrcFiles)
+    foreach ($PS1File in $PS1SrcFiles)
     {
         # execute the generation of the JSON library file
         try
         {
             # build the file
-            & $ps1.FullName
+            . $PS1File
 
             # advise the file has been built
             Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($ps1.Name)"
