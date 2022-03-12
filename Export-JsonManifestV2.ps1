@@ -57,7 +57,7 @@ function Export-JsonManifestV2 {
         $JsonDict.id = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.meta = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.installer = [System.Collections.Specialized.OrderedDictionary]@{}
-        $JsonDict.uninstaller = [System.Collections.Specialized.OrderedDictionary]@{}
+        $JsonDict.uninstall = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.sysinfo = [System.Collections.Specialized.OrderedDictionary]@{}
 
         #region NUSPEC
@@ -139,6 +139,7 @@ function Export-JsonManifestV2 {
 
         #region BUILD JSON
         $JsonDict.guid = $Guid.ToString()
+        
         $JsonDict.id.publisher = $Publisher
         $JsonDict.id.name = $Name
         $JsonDict.id.version = $Version
@@ -169,14 +170,14 @@ function Export-JsonManifestV2 {
         $JsonDict.meta.dependson = $DependsOn
         $JsonDict.meta.nuspecuri = $NuspecUri
 
-        $JsonDict.installer.exectype = $ExecType
-        $JsonDict.installer.installswitches = $InstallSwitches
-        $JsonDict.installer.rebootrequired = $RebootRequired
-        $JsonDict.installer.displayname = $DisplayName
-        $JsonDict.installer.displaypublisher = $DisplayPublisher
-        $JsonDict.installer.displayversion = $DisplayVersion
-        $JsonDict.installer.detectmethod = $DetectMethod
-        $JsonDict.installer.detectvalue = $DetectValue
+        $JsonDict.install.exectype = $ExecType
+        $JsonDict.install.installswitches = $InstallSwitches
+        $JsonDict.install.rebootrequired = $RebootRequired
+        $JsonDict.install.displayname = $DisplayName
+        $JsonDict.install.displaypublisher = $DisplayPublisher
+        $JsonDict.install.displayversion = $DisplayVersion
+        $JsonDict.install.detectmethod = $DetectMethod
+        $JsonDict.install.detectvalue = $DetectValue
         
         $JsonDict.uninstall.process = $UninstallProcess
         $JsonDict.uninstall.string = $UninstallString
