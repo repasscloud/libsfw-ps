@@ -105,7 +105,7 @@ function Export-JsonManifestV2 {
         if (-not($AbsoluteUri))
         {
             try {
-                Get-AbsoluteUri -Uri $FollowUri -ErrorAction Stop
+                $AbsoluteUri = Get-AbsoluteUri -Uri $FollowUri -ErrorAction Stop
                 Write-Output "Absolute URI: [${AbsoluteUri}]"
             }
             catch {
@@ -114,7 +114,6 @@ function Export-JsonManifestV2 {
                 exit 1
             }
         }
-        $AbsoluteUri = $FollowUri
         $FileName = [System.Web.HttpUtility]::UrlDecode($(Split-Path -Path $AbsoluteUri -Leaf))
         Write-Output "Filename: [${FileName}]"
         $WebRequestQuery = [System.Net.HttpWebRequest]::Create($AbsoluteUri)
