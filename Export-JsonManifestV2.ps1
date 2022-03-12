@@ -1,106 +1,50 @@
 function Export-JsonManifestV2 {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$true)][ValidateSet("Productivity")][System.String]$Category,                                   #^ select from categories
+        [Parameter(Mandatory=$true)][ValidateSet("Productivity")][System.String]$Category,      #^ select from categories
         [Parameter(Mandatory=$true)][System.String]$Publisher,                                  #^ publisher name
         [Parameter(Mandatory=$true)][System.String]$Name,                                       #^ application name
         [Parameter(Mandatory=$true)][System.String]$Version,                                    #^ application version
-        [System.String]$Copyright,           # copyright notice
-        [System.Boolean]$LicenseAcceptRequired=$false,              # should default to true only if is required
-        [Parameter(Mandatory=$true)][ValidateSet("x64","x86")][System.String]$Arch,                                       #^ architecture of cpu
-        [Parameter(Mandatory=$true)][ValidateSet("Exe","Msi")]
-        [System.String]$ExecType,                                   #^ executable type
-        [System.String]$FileName,            # file name
-        [System.String]$SHA256,              # sha256 hash
+        [System.String]$Copyright,                                                              # copyright notice
+        [System.Boolean]$LicenseAcceptRequired=$false,                                          # should default to true only if is required
+        [Parameter(Mandatory=$true)][ValidateSet("x64","x86")][System.String]$Arch,             #^ architecture of cpu
+        [Parameter(Mandatory=$true)][ValidateSet("Exe","Msi")][System.String]$ExecType,         #^ executable type
+        [System.String]$FileName,                                                               # file name
+        [System.String]$SHA256,                                                                 # sha256 hash
         [Parameter(Mandatory=$true)][System.String]$FollowUri,                                  #^ uri provided to search for
-        [System.String]$AbsoluteUri,         # the follow_on uri found
-        [System.String]$InstallSwitches,     # which install switches
-        [System.String]$DisplayName,         # registry display name (should be provided to identify)
-        [System.String]$DisplayPublisher,    # registry display publisher
-        [System.String]$DisplayVersion,      # registry display version
-        [System.String]$DetectMethod,        # how is app detected (registry, fileversion, filematched)
-        [System.String]$DetectValue,         # the value for the type
-        [System.String]$UninstallProcess,    # exe, exe2, msi, etc
-        [System.String]$UninstallString,     # how is the uninstall proceessed (used in conjunction with above)
-        [System.String]$UninstallArgs,       # any arguments to be provided to uninstaller (not for MSI usually)
-        [System.String]$Homepage,            # URL of application
-        [System.String]$IconUri,             # icon for optechx portal
-        [System.String]$Docs,                # documentation link
-        [System.String]$License,             # link to license or type of license
-        [System.String[]]$Tags,              # list of tags
-        [System.String]$Summary,             # summary of application 
-        [System.Boolean]$RebootRequired=$false,                     # is a reboot required
+        [System.String]$AbsoluteUri,                                                            # the follow_on uri found
+        [System.String]$InstallSwitches,                                                        # which install switches
+        [System.String]$DisplayName,                                                            # registry display name (should be provided to identify)
+        [System.String]$DisplayPublisher,                                                       # registry display publisher
+        [System.String]$DisplayVersion,                                                         # registry display version
+        [System.String]$DetectMethod,                                                           # how is app detected (registry, fileversion, filematched)
+        [System.String]$DetectValue,                                                            # the value for the type
+        [System.String]$UninstallProcess=[System.String]::Empty,                                # exe, exe2, msi, etc
+        [System.String]$UninstallString=[System.String]::Empty,                                 # how is the uninstall proceessed (used in conjunction with above)
+        [System.String]$UninstallArgs=[System.String]::Empty,                                   # any arguments to be provided to uninstaller (not for MSI usually)
+        [System.String]$Homepage,                                                               # URL of application
+        [System.String]$IconUri,                                                                # icon for optechx portal
+        [System.String]$Docs,                                                                   # documentation link
+        [System.String]$License,                                                                # link to license or type of license
+        [System.String[]]$Tags,                                                                 # list of tags
+        [System.String]$Summary,                                                                # summary of application 
+        [System.Boolean]$RebootRequired=$false,                                                 # is a reboot required
         [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here
-        [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                                        # transfer protocol (mc, ftp, http, etc)
-        [ValidateSet("au-syd1-07")]
-        [System.String]$Locale,                                     #
-        [System.String]$RepoGeo,             #
-        [System.String]$Uri_Path,            # 
-        [System.Boolean]$Enabled=$true,                             # 
-        [System.String[]]$DependsOn,         # 
-        [System.String]$NuspecUri,           # 
-        [System.Version]$SysInfo="4.5.0.0",                         # JSON Specification
-        [Parameter(Mandatory=$true)][System.String]$OutPath
+        [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                            # transfer protocol (mc, ftp, http, etc)
+        [ValidateSet("au-syd1-07")][System.String]$Locale="au-syd1-07",                         # 
+        [System.String]$RepoGeo,                                                                # 
+        [System.String]$Uri_Path,                                                               # 
+        [System.Boolean]$Enabled=$true,                                                         # 
+        [System.String[]]$DependsOn,                                                            # 
+        [System.String]$NuspecUri,                                                              # 
+        [System.Version]$SysInfo="4.5.0.0",                                                     # JSON Specification
+        [Parameter(Mandatory=$true)][System.String]$OutPath                                     #^ 
     )
     
     begin {
         <# PRELOAD - DO NOT EDIT #>
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
         $userAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
-
-        function Get-RedirectedUri {
-            [CmdletBinding()]
-            param (
-                [Parameter(Mandatory = $true)]
-                [System.String]$Uri
-            )
-            process {
-                do {
-                    try {
-                        $request = Invoke-WebRequest -Method Head -Uri $Uri
-                        if ($request.BaseResponse.ResponseUri -ne $null) {
-                            # This is for Powershell 5
-                            $redirectUri = $request.BaseResponse.ResponseUri.AbsoluteUri
-                        }
-                        elseif ($request.BaseResponse.RequestMessage.RequestUri -ne $null) {
-                            # This is for Powershell core
-                            $redirectUri = $request.BaseResponse.RequestMessage.RequestUri.AbsoluteUri
-                        }
-                        $retry = $false
-                    }
-                    catch {
-                        if (($_.Exception.GetType() -match "HttpResponseException") -and ($_.Exception -match "302")) {
-                            $Uri = $_.Exception.Response.Headers.Location.AbsoluteUri
-                            $retry = $true
-                        }
-                        else {
-                            throw $_
-                        }
-                    }
-                } while ($retry)
-                return $redirectUri
-            }
-        }
-        function Get-RedirectedUrl {
-            Param (
-                [Parameter(Mandatory=$true)]
-                [System.String]$url
-            )
-            $request = [System.Net.WebRequest]::Create($url)
-            $request.AllowAutoRedirect = $true
-            $request.UserAgent = 'Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6'
-            try
-            {
-                $response = $request.GetResponse()
-                $returnValue = $response.ResponseUri.AbsoluteUri
-                $response.Close()
-            }
-            catch
-            {
-                "Error: $_"
-            }
-            return $returnValue
-        }
     }
     
     process {
@@ -120,6 +64,7 @@ function Export-JsonManifestV2 {
         # download Nuspec file and check for particulars
         if ($null -notlike $NuspecUri)
         {
+            Write-Output "Nuspec XML provided"
             if (Test-Path -Path "$($env:TMP)\nuspec.xml") { Remove-Item -Path "$($env:TMP)\nuspec.xml" -Confirm:$false -Force }
             $wc = New-Object System.Net.WebClient
             $wc.Headers.Add("user-agent", $userAgent)
@@ -153,24 +98,31 @@ function Export-JsonManifestV2 {
         }
         #endregion NUSPEC
         
-        #region ABSOLUTE URI & FILENAME & HASH & LOCALE
+        #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
         if (-not($AbsoluteUri))
         {
-            try { [System.String]$Url01 = Get-RedirectedUri -Uri $FollowUri -ErrorAction Stop } catch { $Url01 = $null }
-            try { [System.String]$Url02 = Get-RedirectedUrl -url $FollowUri -ErrorAction Stop } catch { $Url02 = $null }
-
-            if (-not($Url01 -like $Url02))
-            {
-                if ($null -notlike $Url01) { $AbsoluteUri=$Url01}
-                elseif ($null -notlike $Url02) { $AbsoluteUri=$Url02}
-                else { exit 1 }
+            try {
+                $AbsoluteUri = Get-AbsoluteUri -Uri $FollowUri -ErrorAction Stop
+                Write-Output "Absolute URI: [${AbsoluteUri}]"
+            }
+            catch {
+                Write-Output "FollowUri not found: [${FollowUri}]"
+                Start-Sleep -Seconds 3
+                exit 1
             }
         }
         $FileName = [System.Web.HttpUtility]::UrlDecode($(Split-Path -Path $AbsoluteUri -Leaf))
+        Write-Output "Filename: [${FileName}]"
+        $WebRequestQuery = [System.Net.HttpWebRequest]::Create($AbsoluteUri)
+        $WebRequestQuery.Method = "HEAD"
+        $WebRequest = $WebRequestQuery.GetResponse()
+        $DLFileBytesSize = $WebRequest.ContentLength
+        Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        $Locale = "apps/${Publisher}/${Name}/${Version}/${Arch}/${FileName}"
-        #endregion ABSOLUTE URI & FILENAME & HASH & LOCALE
+        $Locale = "au-syd1-07"
+        $Uri_Path = "apps/${Publisher}/${Name}/${Version}/${Arch}/${FileName}"
+        #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
 
         #region UID_KEY
         $UID = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))_${Version}_${Arch}_${ExecType}_${LCID}"
@@ -222,7 +174,7 @@ function Export-JsonManifestV2 {
         $JsonDict.uninstall.string = $UninstallString
         $JsonDict.uninstall.args = $UninstallArgs
 
-        $OutFilePath = JoinPath -Path $OutPath -ChildPath "${UID}.json"
+        $OutFilePath = Join-Path -Path $OutPath -ChildPath "${UID}.json"
         $JsonDict | ConvertTo-Json -Depth 4 | Out-File -FilePath $OutFilePath -Encoding utf8 -Force -Confirm:$false
         #endregion BUILD JSON
     }
