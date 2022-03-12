@@ -56,7 +56,7 @@ function Export-JsonManifestV2 {
         $JsonDict = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.id = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.meta = [System.Collections.Specialized.OrderedDictionary]@{}
-        $JsonDict.installer = [System.Collections.Specialized.OrderedDictionary]@{}
+        $JsonDict.install = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.uninstall = [System.Collections.Specialized.OrderedDictionary]@{}
         $JsonDict.sysinfo = [System.Collections.Specialized.OrderedDictionary]@{}
 
@@ -139,7 +139,7 @@ function Export-JsonManifestV2 {
 
         #region BUILD JSON
         $JsonDict.guid = $Guid.ToString()
-        
+
         $JsonDict.id.publisher = $Publisher
         $JsonDict.id.name = $Name
         $JsonDict.id.version = $Version
