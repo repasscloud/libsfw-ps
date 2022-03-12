@@ -52,7 +52,7 @@ function Export-JsonManifestV2 {
         [System.String]$UID                                 # UID ISO:1005 <publisher>.<app_name>_<version>_<arch>_<exe_type>_<lcid> (ie - google-chrome-94.33.110.22-x64-msi_en-US)
         [System.String]$Key                                 # auto-generated
 
-        Write-Output "Building JSON Manifest: [${Publisher} ${Name} ${Arch}"
+        Write-Output "Building JSON Manifest: [${Publisher} ${Name} ${Arch}]"
 
         <# JSON DATA STRUCTURE - DO NOT EDIT #>
         $JsonDict = [System.Collections.Specialized.OrderedDictionary]@{}
@@ -101,6 +101,7 @@ function Export-JsonManifestV2 {
         #endregion NUSPEC
         
         #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
+        Write-Output "FollowUri is: [${FollowUri}]"
         if (-not($AbsoluteUri))
         {
             try {
