@@ -7,7 +7,7 @@ function Build-JsonFiles {
     # declare error action
     $ErrorActionPreference = "Stop"
 
-    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse | Select-Object -ExpandProperty FullName
+    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse
     
     foreach ($PS1File in $PS1SrcFiles)
     {
@@ -15,14 +15,14 @@ function Build-JsonFiles {
         try
         {
             # build the file
-            . $PS1File
+            . $PS1File.FullName
 
             # advise the file has been built
             Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($PS1File.Name)"
         }
         catch
         {
-            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F534")) UNABLE TO PROCESS: $($pPS1File.Name)"
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F534")) UNABLE TO PROCESS: $($PS1File.Name)"
         }
     }
 }
