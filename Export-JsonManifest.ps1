@@ -137,16 +137,10 @@ function Export-JsonManifest {
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         [System.String]$DownloadFilePath = "$env:TMP\$FileName"
 
-        <# VERBOSE OUTPUT #>
-        $DownloadFilePath
-        $AbsoluteUri
-        Test-Path -Path C:\odf
-        Get-ChildItem -Path C:\odf
 
         try
         {
             & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
-            Write-Output "File downloaded [${DownloadFilePath}]"
         }
         catch
         {
@@ -154,10 +148,7 @@ function Export-JsonManifest {
             exit 1
         }
 
-        if (-not(Test-Path -Path $DownloadFilePath))
-        {
-            exit 1
-        }
+        Write-Output "Env Path is: $($env:PATH)"
         
         #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
