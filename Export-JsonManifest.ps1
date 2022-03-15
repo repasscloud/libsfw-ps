@@ -17,8 +17,8 @@ function Export-JsonManifest {
         [System.String]$DisplayName=[System.String]::Empty,                                     #% registry display name (should be provided to identify)
         [System.String]$DisplayPublisher=[System.String]::Empty,                                #% registry display publisher
         [System.String]$DisplayVersion=[System.String]::Empty,                                  #% registry display version
-        [System.String]$DetectMethod=[System.String]::Empty,                                    # how is app detected (registry, fileversion, filematched)
-        [ValidateSet("Registry","FileVersion","File")][System.String]$DetectValue="Registry",   # the value for the type
+        [ValidateSet("Registry","FileVersion","File")][System.String]$DetectMethod="Registry",  # how is app detected (registry, fileversion, filematched)
+        [System.String]$DetectValue=[System.String]::Empty,                                     # the value for the type
         [System.String]$UninstallProcess=[System.String]::Empty,                                #% exe, exe2, msi, etc
         [System.String]$UninstallString=[System.String]::Empty,                                 #% how is the uninstall proceessed (used in conjunction with above)
         [System.String]$UninstallArgs=[System.String]::Empty,                                   #% any arguments to be provided to uninstaller (not for MSI usually)
@@ -27,7 +27,7 @@ function Export-JsonManifest {
         [System.String]$Docs=[System.String]::Empty,                                            # documentation link
         [System.String]$License=[System.String]::Empty,                                         # link to license or type of license
         [System.String[]]$Tags,                                                                 # list of tags
-        [System.String]$Summary,                                                                # summary of application 
+        [System.String]$Summary=[System.String]::Empty,                                         # summary of application 
         [System.Boolean]$RebootRequired=$false,                                                 # is a reboot required
         [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here
         [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                            # transfer protocol (mc, ftp, http, etc)
@@ -35,7 +35,7 @@ function Export-JsonManifest {
         [System.String]$RepoGeo=[System.String]::Empty,                                         # 
         [System.String]$Uri_Path=[System.String]::Empty,                                        # 
         [System.Boolean]$Enabled=$true,                                                         # 
-        [System.String[]]$DependsOn,                                                            # 
+        [System.String[]]$DependsOn=[System.String]::Empty,                                     # 
         [System.String]$NuspecUri=[System.String]::Empty,                                       # 
         [System.Version]$SysInfo="4.5.0.0",                                                     # JSON Specification
         [Parameter(Mandatory=$true)][System.String]$OutPath                                     #^ 
