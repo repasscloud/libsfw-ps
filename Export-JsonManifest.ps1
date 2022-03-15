@@ -147,8 +147,10 @@ function Export-JsonManifest {
             exit 1
         }
 
-        Test-Path $DownloadFilePath
-
+        if (-not(Test-Path -PathType $DownloadFilePath))
+        {
+            exit 1
+        }
         
         #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
@@ -202,7 +204,7 @@ function Export-JsonManifest {
         $JsonDict.uninstall.string = $UninstallString
         $JsonDict.uninstall.args = $UninstallArgs
 
-        $JsonDIct.sysinfo = $SysInfo
+        $JsonDict.sysinfo = $SysInfo
 
         $OutFilePath = Join-Path -Path $OutPath -ChildPath "${UID}.json"
         $JsonDict | ConvertTo-Json -Depth 4 | Out-File -FilePath $OutFilePath -Encoding utf8 -Force -Confirm:$false

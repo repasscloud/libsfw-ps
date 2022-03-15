@@ -18,11 +18,11 @@ function Build-JsonFiles {
             . $PS1File
 
             # advise the file has been built
-            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($ps1.Name)"
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($PS1File.Name)"
         }
         catch
         {
-            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F534")) UNABLE TO PROCESS: $($ps1.Name)"
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F534")) UNABLE TO PROCESS: $($pPS1File.Name)"
         }
     }
 }
