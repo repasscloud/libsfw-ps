@@ -135,11 +135,12 @@ function Export-JsonManifest {
         $WebRequest = $WebRequestQuery.GetResponse()
         $DLFileBytesSize = $WebRequest.ContentLength
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
-        $DownloadFilePath = "$env:TMP\$FileName"
+        [System.String]$DownloadFilePath = "$env:TMP\$FileName"
 
         try
         {
             & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
+            Write-Output "File downloaded [${DownloadFilePath}]"
         }
         catch
         {
@@ -147,7 +148,7 @@ function Export-JsonManifest {
             exit 1
         }
 
-        if (-not(Test-Path -PathType $DownloadFilePath))
+        if (-not(Test-Path -Path $DownloadFilePath))
         {
             exit 1
         }
