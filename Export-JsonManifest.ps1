@@ -137,6 +137,12 @@ function Export-JsonManifest {
         Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
         [System.String]$DownloadFilePath = "$env:TMP\$FileName"
 
+        <# VERBOSE OUTPUT #>
+        $DownloadFilePath
+        $AbsoluteUri
+        Test-Path -Path C:\odf
+        Get-ChildItem -Path C:\odf
+
         try
         {
             & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
