@@ -148,7 +148,8 @@ function Export-JsonManifest {
             exit 1
         }
 
-        Write-Output "Env Path is: $($env:PATH)"
+        # Write-Output "Env Path is: $($env:PATH)"
+        <# we know the $env:PATH variable contains ';C:\odf' we just can't execute it as the code is .Net Core 2.1 and not an executable file :-( #>
         
         #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
