@@ -4,21 +4,21 @@ function Build-JsonFiles {
         [System.String]$JsonMapDir
     )
     
-    # declare error action
+    # error action preference
     $ErrorActionPreference = "Stop"
 
-    [System.Array]$PS1SrcFiles = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse
+    [System.String[]]$PS1Files = Get-ChildItem -Path $JsonMapDir -Filter "*.ps1" -Recurse -File | Select-Object -ExpandProperty FullName
     
-    foreach ($PS1File in $PS1SrcFiles)
+    foreach ($PS1File in $PS1Files)
     {
         # execute the generation of the JSON library file
         try
         {
             # build the file
-            . $PS1File.FullName
+            powershell -File $PS1File -ErrorAction Stop
 
             # advise the file has been built
-            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($PS1File.Name)"
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILT JSON FILE FOR INGEST: $($PS1File)"
         }
         catch
         {
