@@ -52,7 +52,7 @@ function Export-JsonManifest {
         [System.String]$UID                                 # UID ISO:1005 <publisher>.<app_name>_<version>_<arch>_<exe_type>_<lcid> (ie - google-chrome-94.33.110.22-x64-msi_en-US)
         [System.String]$Key                                 # auto-generated
 
-        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILD JSON MANIFEST: : [ ${Publisher} ${Name} ${Arch} ]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILD JSON MANIFEST: [ ${Publisher} ${Name} ${Arch} ]"
 
         <# JSON DATA STRUCTURE - DO NOT EDIT #>
         $JsonDict = [System.Collections.Specialized.OrderedDictionary]@{}
@@ -66,7 +66,7 @@ function Export-JsonManifest {
         # download Nuspec file and check for particulars
         if ($null -notlike $NuspecUri)
         {
-            Write-Output "Nuspec XML provided"
+            "$([System.Char]::ConvertFromUTF32("0x1F7E2")) NUSPEC XML PROVIDED"
             if (Test-Path -Path "$($env:TMP)\nuspec.xml") { Remove-Item -Path "$($env:TMP)\nuspec.xml" -Confirm:$false -Force }
             $wc = New-Object System.Net.WebClient
             $wc.Headers.Add("user-agent", $userAgent)
