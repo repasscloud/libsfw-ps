@@ -155,7 +155,6 @@ function Export-JsonManifest {
         
         #Invoke-WebRequest -Uri "$AbsoluteUri" -OutFile "$env:TMP\$FileName" -UseBasicParsing
         $SHA256 = Get-FileHash -Path "$env:TMP\$FileName" -Algorithm SHA256 | Select-Object -ExpandProperty Hash
-        $Locale = "au-syd1-07"
         $Uri_Path = "apps/${Publisher}/${Name}/${Version}/${Arch}/${FileName}"
         #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
 
@@ -207,7 +206,7 @@ function Export-JsonManifest {
 
         $JsonDict.sysinfo = $SysInfo
 
-        $OutFilePath = Join-Path -Path $OutPath -ChildPath "${UID}.json"
+        $OutFilePath = Join-Path -Path $OutPath -ChildPath "${UID}.json".Replace('/','_')
         $JsonDict | ConvertTo-Json -Depth 4 | Out-File -FilePath $OutFilePath -Encoding utf8 -Force -Confirm:$false
         #endregion BUILD JSON
     }
