@@ -52,7 +52,7 @@ function Export-JsonManifest {
         [System.String]$UID                                 # UID ISO:1005 <publisher>.<app_name>_<version>_<arch>_<exe_type>_<lcid> (ie - google-chrome-94.33.110.22-x64-msi_en-US)
         [System.String]$Key                                 # auto-generated
 
-        Write-Output "Building JSON Manifest: [${Publisher} ${Name} ${Arch}]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) BUILD JSON MANIFEST: : [ ${Publisher} ${Name} ${Arch} ]"
 
         <# JSON DATA STRUCTURE - DO NOT EDIT #>
         $JsonDict = [System.Collections.Specialized.OrderedDictionary]@{}
