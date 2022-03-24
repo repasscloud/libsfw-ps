@@ -8,7 +8,7 @@ function Export-JsonManifest {
         [System.String]$Copyright=[System.String]::Empty,                                       # copyright notice
         [System.Boolean]$LicenseAcceptRequired=$false,                                          # should default to true only if is required
         [Parameter(Mandatory=$true)][ValidateSet("x64","x86")][System.String]$Arch,             #^ architecture of cpu
-        [Parameter(Mandatory=$true)][ValidateSet("Exe","Msi")][System.String]$ExecType,         #^ executable type
+        [Parameter(Mandatory=$true)][ValidateSet("exe","msi")][System.String]$ExecType,         #^ executable type
         [System.String]$FileName=[System.String]::Empty,                                        #% file name
         [System.String]$SHA256=[System.String]::Empty,                                          #% sha256 hash
         [Parameter(Mandatory=$true)][System.String]$FollowUri,                                  #^ uri provided to search for
@@ -91,17 +91,17 @@ function Export-JsonManifest {
             }
             catch
             {
-                Write-Output "Nuspec file could not be read or did not download"
+                Write-Output "$([System.Char]::ConvertFromUTF32("0x1F534")) NUSPEC COULD NOT BE READ OR DID NOT DOWNLOAD"
             }
         }
         else
         {
-            Write-Output "Nuspec URI not provided"    
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E0")) NUSPEC NOT PROVIDED"
         }
         #endregion NUSPEC
 
         #region UID_KEY
-        $UID = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))_${Version}_${Arch}_${ExecType}_${LCID}"
+        $UID = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))/${Version}/${Arch}/${ExecType}/${LCID}"
         $Key = "$($Publisher.ToLower().Replace(' ','')).$($Name.ToLower().Replace(' ',''))"
         #endregion UID_KEY
         
@@ -142,7 +142,7 @@ function Export-JsonManifest {
         try
         {
             & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
-            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) COMPLETE"
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) DOWNLOAD VERIFIED"
         }
         catch
         {
