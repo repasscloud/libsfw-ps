@@ -106,45 +106,47 @@ function Export-JsonManifest {
         #endregion UID_KEY
         
         #region ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
-        Write-Output "FollowUri is: [${FollowUri}]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) FOLLOW URI: [ ${FollowUri} ]"
         if (-not($AbsoluteUri))
         {
             try {
                 $AbsoluteUri = Get-AbsoluteUri -Uri $FollowUri -ErrorAction Stop
-                Write-Output "Absolute URI: [${AbsoluteUri}]"
+                Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) ABSOLUTE URI MATCH"
             }
             catch {
-                Write-Output "FollowUri not found: [${FollowUri}]"
+                Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E0")) FOLLOW URI NOT FOUND: [ ${FollowUri} ]"
                 $Body = @{
                     title  = "FollowUri Not Found: ${Key}"
                     body   = "FollowUri not found: $FollowUri`r`n`r`n${UID}"
                     labels = @("ci-followuri-not-found")
                 } | ConvertTo-Json
-                $Headers = @{Authorization = 'token ' + $Env:GH_TOKEN}
+                $Headers = @{Authorization = 'token ' + $env:GH_TOKEN}
                 $owner = "repasscloud"
-                $repository = "libsfw"
+                $repository = "libsfw2"
                 $NewIssue = Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$owner/$repository/issues" -Body $Body -Headers $Headers -ContentType "application/json"
                 $NewIssue.html_url
                 exit 1
             }
         }
         $FileName = [System.Web.HttpUtility]::UrlDecode($(Split-Path -Path $AbsoluteUri -Leaf))
-        Write-Output "Filename: [${FileName}]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) FILENAME: [ ${FileName} ]"
         $WebRequestQuery = [System.Net.HttpWebRequest]::Create($AbsoluteUri)
         $WebRequestQuery.Method = "HEAD"
         $WebRequest = $WebRequestQuery.GetResponse()
         $DLFileBytesSize = $WebRequest.ContentLength
-        Write-Output "Download file [${FileName}] to [$env:TMP] with size [${DLFileBytesSize}]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) DOWNLOAD FILE: [ ${FileName} ]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) TO DIRECTORY:  [ $env:TMP ]"
+        Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) DL SIZE:       [ ${DLFileBytesSize} ]"
         [System.String]$DownloadFilePath = "$env:TMP\$FileName"
-
 
         try
         {
             & dotnet "C:\odf\optechx.DownloadFile.dll" $AbsoluteUri $DownloadFilePath
+            Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) COMPLETE"
         }
         catch
         {
-            Write-Output "Unable to download file!"
+            "$([System.Char]::ConvertFromUTF32("0x1F534")) UNABLE TO DOWNLOAD FILE"
             exit 1
         }
 
