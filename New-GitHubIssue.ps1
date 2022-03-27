@@ -6,15 +6,13 @@ function New-GitHubIssue {
         [Parameter(Mandatory=$true)][System.String[]]$Labels,
         [Parameter(Mandatory=$true)][System.String]$Repository,
         [Parameter(Mandatory=$false)][System.String]$Owner='repasscloud',
-        [Parameter(Mandatory=$false)][System.String]$Token=$env:GH_TOKEN
+        [Parameter(Mandatory=$true)][System.String]$Token
     )
-    
     begin {
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
     }
-    
     process {
-        $Headers = @{Authorization = 'token ' + $env:GH_TOKEN}
+        $Headers = @{Authorization = 'token ' + $Token}
         $Body = @{
             title  = "${Title}"
             body   = "${Body}"
@@ -23,7 +21,6 @@ function New-GitHubIssue {
         $NewIssue = Invoke-RestMethod -Method Post -Uri "https://api.github.com/repos/$owner/$repository/issues" -Body $Body -Headers $Headers -ContentType "application/json"
         return $NewIssue.html_url
     }
-    
     end {
         [System.GC]::Collect()
     }

@@ -13,11 +13,16 @@ function Get-AbsoluteUri {
         $WebRequestQuery.Method = "HEAD"
         $ResponseValue = $WebRequestQuery.GetResponse()
         $ResponseUri = $ResponseValue.ResponseUri
-        $AbsoluteUri = $ResponseUri.AbsoluteUri
-        $ReturnValue = [System.Web.HttpUtility]::UrlDecode($AbsoluteUri)
+        $FoundUri = $ResponseUri.AbsoluteUri
+        $ReturnValue = [System.Web.HttpUtility]::UrlDecode($FoundUri)
         return $ReturnValue
     }
     end {
+        $WebRequestQuery = [System.String]::Empty
+        $ResponseValue = [System.String]::Empty
+        $ResponseUri = [System.String]::Empty
+        $FoundUri = [System.String]::Empty
+        $ReturnValue = [System.String]::Empty
         [System.GC]::Collect()
     }
 }
