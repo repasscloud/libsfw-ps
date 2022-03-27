@@ -1,1 +1,2 @@
-# libsfw2
+# libsfw-ps
+PowerShell scripts used for libsfw
