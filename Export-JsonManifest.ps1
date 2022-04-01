@@ -13,8 +13,10 @@ function Export-JsonManifest {
         [System.Boolean]$LicenseAcceptRequired=$false,                                          # should default to true only if is required
         [Parameter(Mandatory=$true)]
             [ValidateSet("x64","x86","aarch32","arm64")]
-            [System.String]$Arch,             #^ architecture of cpu
-        [Parameter(Mandatory=$true)][ValidateSet("exe","msi")][System.String]$ExecType,         #^ executable type
+            [System.String]$Arch,                                                               #^ architecture of cpu
+        [Parameter(Mandatory=$true)]
+            [ValidateSet("msi","msix","exe","bat","ps1","zip","script","cab")]
+            [System.String]$ExecType,                                                           #^ executable type
         [System.String]$FileName=[System.String]::Empty,                                        #% file name
         [System.String]$SHA256=[System.String]::Empty,                                          #% sha256 hash
         [Parameter(Mandatory=$true)][System.String]$FollowUri,                                  #^ uri provided to search for
@@ -26,7 +28,9 @@ function Export-JsonManifest {
         [ValidateSet("Registry","FileVersion","File","Script")]
             [System.String]$DetectMethod="Registry",                                            # how is app detected (registry, fileversion, filematched, script)
         [System.String]$DetectValue=[System.String]::Empty,                                     # the value for the type
-        [System.String]$UninstallProcess=[System.String]::Empty,                                #% exe, exe2, msi, etc
+        [Parameter(Mandatory=$true)]
+            [ValidateSet("void_uninstall","msi","exe","exe2","inno","script")]
+            [System.String]$UninstallProcess=[System.String]::Empty,                            #% exe, exe2, msi, etc
         [System.String]$UninstallString=[System.String]::Empty,                                 #% how is the uninstall proceessed (used in conjunction with above)
         [System.String]$UninstallArgs=[System.String]::Empty,                                   #% any arguments to be provided to uninstaller (not for MSI usually)
         [System.String]$Homepage=[System.String]::Empty,                                        # URL of application
@@ -36,7 +40,7 @@ function Export-JsonManifest {
         [System.String[]]$Tags,                                                                 # list of tags
         [System.String]$Summary=[System.String]::Empty,                                         # summary of application 
         [System.Boolean]$RebootRequired=$false,                                                 # is a reboot required
-        [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here
+        [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here  <~ too many languages to isolate here https://github.com/repasscloud/libsfw-ps/issues/5#issuecomment-1086025038
         [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                            # transfer protocol (mc, ftp, http, etc)
         [System.String]$Locale="au-syd1-07",                                                    # 
         [System.String]$RepoGeo=[System.String]::Empty,                                         # 
