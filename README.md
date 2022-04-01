@@ -1,2 +1,2 @@
-# libsfw-corelib
-Library of Software Packages Core Library
+# libsfw-ps
+PowerShell scripts used for libsfw
