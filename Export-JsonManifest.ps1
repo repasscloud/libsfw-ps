@@ -41,7 +41,9 @@ function Export-JsonManifest {
         [System.String]$Summary=[System.String]::Empty,                                         # summary of application 
         [System.Boolean]$RebootRequired=$false,                                                 # is a reboot required
         [Parameter(Mandatory=$true)][System.String]$LCID,                                       #^ language being supported here  <~ too many languages to isolate here https://github.com/repasscloud/libsfw-ps/issues/5#issuecomment-1086025038
-        [ValidateSet("mc","ftp","http","other")][System.String]$XFT,                            # transfer protocol (mc, ftp, http, etc)
+        [Parameter(Mandatory=$true)]
+            [ValidateSet("mc","ftp","sftp","ftpes","http","https","s3","other")]
+            [System.String]$XFT,                                                                #^ transfer protocol (mc, ftp, http, etc)
         [System.String]$Locale="au-syd1-07",                                                    # 
         [System.String]$RepoGeo=[System.String]::Empty,                                         # 
         [System.String]$Uri_Path=[System.String]::Empty,                                        # 
@@ -62,7 +64,7 @@ function Export-JsonManifest {
     process {
         [System.Guid]$Guid = [System.Guid]::NewGuid().Guid  # auto-generated
         [System.String]$UID  # UID ISO:1006 <publisher>::<app_name>::<version>::<arch>::<exe_type>::<lcid> (ie - google::chrome::94.33.110.22::x64::msi::en-US)
-        [System.String]$Key  # auto-generated
+        [System.String]$Key  # auto-generated further down
 
         #region UID_KEY
         $UID = "$($Publisher.ToLower().Replace(' ',''))::$($Name.ToLower().Replace(' ',''))::${Version}::${Arch}::${ExecType}::${LCID}"
@@ -180,6 +182,7 @@ function Export-JsonManifest {
             #endregion Security Scans
 
             #region BUILD JSON
+            #$JsonDict.id = 0
             $JsonDict.guid = $Guid.ToString()
 
             $JsonDict.id.publisher = $Publisher
