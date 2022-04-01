@@ -4,14 +4,16 @@ function Export-JsonManifest {
         [Parameter(Mandatory=$true)]
             [ValidateSet("Productivity","Microsoft","Utility","Developer Tools",
             "Games","Photo & Design","Entertainment","Security","Education",
-            "Internet","Lifestyle")]
+            "Internet","Lifestyles")]
             [System.String]$Category,                                                           #^ select from categories
         [Parameter(Mandatory=$true)][System.String]$Publisher,                                  #^ publisher name
         [Parameter(Mandatory=$true)][System.String]$Name,                                       #^ application name
         [Parameter(Mandatory=$true)][System.String]$Version,                                    #^ application version
         [System.String]$Copyright=[System.String]::Empty,                                       # copyright notice
         [System.Boolean]$LicenseAcceptRequired=$false,                                          # should default to true only if is required
-        [Parameter(Mandatory=$true)][ValidateSet("x64","x86")][System.String]$Arch,             #^ architecture of cpu
+        [Parameter(Mandatory=$true)]
+            [ValidateSet("x64","x86","aarch32","arm64")]
+            [System.String]$Arch,             #^ architecture of cpu
         [Parameter(Mandatory=$true)][ValidateSet("exe","msi")][System.String]$ExecType,         #^ executable type
         [System.String]$FileName=[System.String]::Empty,                                        #% file name
         [System.String]$SHA256=[System.String]::Empty,                                          #% sha256 hash
