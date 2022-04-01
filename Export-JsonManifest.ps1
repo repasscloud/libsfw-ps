@@ -178,7 +178,8 @@ function Export-JsonManifest {
             #endregion ABSOLUTE URI & FILENAME & HASH & LOCALE & REPOGEO
 
             #region Security Scans
-            $VTScanResultsId = New-VirusTotalScan -ApiKey $env:VT_API_KEY -FilePath "$env:TMP\$FileName" -BaseUri $env:API_BASE_URI
+            #$VTScanResultsId = New-VirusTotalScan -ApiKey $env:VT_API_KEY -FilePath "$env:TMP\$FileName" -BaseUri $env:API_BASE_URI
+            $VTScanResultsId = 0
             #endregion Security Scans
 
             #region BUILD JSON
