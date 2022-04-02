@@ -206,12 +206,11 @@ function Export-JsonManifest {
             [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
             if (Test-Path -Path $CsvInstallDump){ Remove-Item -Path $CsvInstallDump -Confirm:$false -Force }
             Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
-            Test-Path -Path "$env:TMP\CSV_INSTALL_DUMP.csv"
             switch ($DetectMethod)
             {
                 'Registry'
                 {
-                    $Count = 1
+                    $Count = 0
 
                     <# VERIFY FROM REGISTRY #>
                     $InstalledBefore = Import-Csv -Path "$env:TMP\CSV_PRE-INSTALL_DUMP.csv" | Select-Object -ExpandProperty DisplayName
@@ -223,23 +222,22 @@ function Export-JsonManifest {
                             "FOUND INSTALL: ${Install}"
                             $Count += 1
                             <# READ DATA FROM REGISTRY #>
-                            # $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
-                            # [System.String]$env:DisplayName = $Mapped.DisplayName
-                            # [System.String]$env:DisplayVersion = $Mapped.DisplayVersion
-                            # [System.String]$env:DisplayPublisher = $Mapped.Publisher
-                            # [System.String]$env:UninstallCmd = $Mapped.UninstallString
+                            $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
+                            [System.String]$DisplayName = $Mapped.DisplayName
+                            [System.String]$DisplayVersion = $Mapped.DisplayVersion
+                            [System.String]$DisplayPublisher = $Mapped.Publisher
+                            [System.String]$UninstallCmd = $Mapped.UninstallString
 
-                            # $env:DisplayName
-                            # $env:DisplayVersion
-                            # $env:DisplayPublisher
-                            # $env:UninstallCmd
+                            $DisplayName
+                            $DisplayVersion
+                            $DisplayPublisher
+                            $UninstallCmd
 
                             # <# UNINSTALL APPLICATION #>
                             # Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
                         }
                         else
                         {
-                            Write-Output "UNABLE TO MATCH DATA WITH REGISTRY!"
                         }
                     }
                 }
