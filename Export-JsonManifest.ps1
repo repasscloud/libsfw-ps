@@ -224,8 +224,7 @@ function Export-JsonManifest {
             $JsonDict.meta.tags = $Tags
             $JsonDict.meta.summary = $Summary
             $JsonDict.meta.xft = $XFT
-            $JsonDict.meta.locale = $Locale
-            $JsonDict.meta.repogeo = $RepoGeo
+            $JsonDict.meta.locale = $Locale$RepoGeo
             $JsonDict.meta.uripath = $UriPath
             $JsonDict.meta.enabled = $Enabled
             $JsonDict.meta.dependson = $DependsOn
