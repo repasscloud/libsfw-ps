@@ -23,6 +23,8 @@ function Invoke-OXAppIngest {
 
         if ($JsonData.install.rebootRequired -eq $false)
         {
+            <# SET ENV VARIABLES #>
+
             <# INSTALL APPLICATION #>
             Install-ApplicationPackage -InstallerType exe -PackageName $JsonData.id.uid -FileName $JsonData.meta.filename -InstallSwitches $JsonData.install.installswitches -DLPath $env:TMP
 
@@ -43,10 +45,10 @@ function Invoke-OXAppIngest {
                         {
                             <# READ DATA FROM REGISTRY #>
                             $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
-                            [System.String]$DisplayName = $Mapped.DisplayName
-                            [System.String]$DisplayVersion = $Mapped.DisplayVersion
-                            [System.String]$DisplayPublisher = $Mapped.Publisher
-                            [System.String]$UninstallCmd = $Mapped.UninstallString
+                            [System.String]$env:DisplayName = $Mapped.DisplayName
+                            [System.String]$env:DisplayVersion = $Mapped.DisplayVersion
+                            [System.String]$env:DisplayPublisher = $Mapped.Publisher
+                            [System.String]$env:UninstallCmd = $Mapped.UninstallString
 
                             <# UNINSTALL APPLICATION #>
                             Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
@@ -86,14 +88,14 @@ function Invoke-OXAppIngest {
             installCmd = $JsonData.meta.filename
             installArgs = $JsonData.install.installswitches
             installScript = [System.String]::Empty  # reserved for LoB applications
-            displayName = $DisplayName
-            displayPublisher = $DisplayPublisher
-            displayVersion = $DisplayVersion
+            displayName = $env:DisplayName
+            displayPublisher = $env:DisplayPublisher
+            displayVersion = $env:DisplayVersion
             packageDetection = $JsonDict.install.detectmethod
             detectScript = [System.String]::Empty  # reserved for LoB applications
             detectValue = $JsonData.install.detectvalue
             uninstallProcess = $JsonData.uninstall.process
-            uninstallCmd = $UninstallCmd
+            uninstallCmd = $env:UninstallCmd
             uninstallArgs = $JsonData.uninstall.args
             uninstallScript = [System.String]::Empty  # reserved for LoB applications
             homepage = $JsonData.meta.homepage
@@ -107,12 +109,12 @@ function Invoke-OXAppIngest {
             uriPath = $JsonData.meta.uripath
             enabled = $JsonData.meta.enabled
             dependsOn = $JsonData.meta.dependson
-            virusTotalScanResultsId = $JsonData.security.virustotalscanresultsid.id
+            virusTotalScanResultsId = $JsonData.security.virustotalscanresultsid
             exploitReportId = 1
         } | ConvertTo-Json
 
         $Body
-        Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
+        #Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
     }
     
     end {
