@@ -206,7 +206,7 @@ function Export-JsonManifest {
             [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
             if (Test-Path -Path $CsvInstallDump){ Remove-Item -Path $CsvInstallDump -Confirm:$false -Force }
             Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
-
+            Test-Path -Path "$env:TMP\CSV_INSTALL_DUMP.csv"
             switch ($DetectMethod)
             {
                 'Registry'
