@@ -211,41 +211,44 @@ function Export-JsonManifest {
             {
                 'Registry'
                 {
-                    Write-Output "Does detect method match 'Registry'?"
-                    # <# VERIFY FROM REGISTRY #>
-                    # $InstalledBefore = Import-Csv -Path "$env:TMP\CSV_PRE-INSTALL_DUMP.csv" | Select-Object -ExpandProperty DisplayName
-                    # $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
-                    # foreach ($Install in $InstalledAfter)
-                    # {
-                    #     if ($InstalledBefore -notcontains $Install)
-                    #     {
-                    #         "FOUND INSTALL: ${Install}"
-                    #         <# READ DATA FROM REGISTRY #>
-                    #         $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
-                    #         [System.String]$env:DisplayName = $Mapped.DisplayName
-                    #         [System.String]$env:DisplayVersion = $Mapped.DisplayVersion
-                    #         [System.String]$env:DisplayPublisher = $Mapped.Publisher
-                    #         [System.String]$env:UninstallCmd = $Mapped.UninstallString
+                    $Count = 1
 
-                    #         $env:DisplayName
-                    #         $env:DisplayVersion
-                    #         $env:DisplayPublisher
-                    #         $env:UninstallCmd
+                    <# VERIFY FROM REGISTRY #>
+                    $InstalledBefore = Import-Csv -Path "$env:TMP\CSV_PRE-INSTALL_DUMP.csv" | Select-Object -ExpandProperty DisplayName
+                    $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
+                    foreach ($Install in $InstalledAfter)
+                    {
+                        if ($InstalledBefore -notcontains $Install)
+                        {
+                            "FOUND INSTALL: ${Install}"
+                            $Count += 1
+                            <# READ DATA FROM REGISTRY #>
+                            # $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
+                            # [System.String]$env:DisplayName = $Mapped.DisplayName
+                            # [System.String]$env:DisplayVersion = $Mapped.DisplayVersion
+                            # [System.String]$env:DisplayPublisher = $Mapped.Publisher
+                            # [System.String]$env:UninstallCmd = $Mapped.UninstallString
 
-                    #         <# UNINSTALL APPLICATION #>
-                    #         Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
-                    #     }
-                    #     else
-                    #     {
-                    #         Write-Output "UNABLE TO MATCH DATA WITH REGISTRY!"
-                    #     }
-                    # }
+                            # $env:DisplayName
+                            # $env:DisplayVersion
+                            # $env:DisplayPublisher
+                            # $env:UninstallCmd
+
+                            # <# UNINSTALL APPLICATION #>
+                            # Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
+                        }
+                        else
+                        {
+                            Write-Output "UNABLE TO MATCH DATA WITH REGISTRY!"
+                        }
+                    }
                 }
                 Default
                 {
                     "Did not match 'Registry'"
                 }
             }
+            $Count
             #endregion Instal/Uninstall
 
 
