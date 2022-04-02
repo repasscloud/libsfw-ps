@@ -224,14 +224,14 @@ function Export-JsonManifest {
             $JsonDict.meta.tags = $Tags
             $JsonDict.meta.summary = $Summary
             $JsonDict.meta.xft = $XFT
-            $JsonDict.meta.locale = $Locale$RepoGeo
+            $JsonDict.meta.locale = $Locale
             $JsonDict.meta.uripath = $UriPath
             $JsonDict.meta.enabled = $Enabled
             $JsonDict.meta.dependson = $DependsOn
             $JsonDict.meta.nuspecuri = $NuspecUri
 
             $JsonDict.install.exectype = $ExecType
-            $JsonDict.install.installswitches = $InstallSwitches
+            $JsonDict.install.installswitches = $InstallArgs
             $JsonDict.install.rebootrequired = $RebootRequired
             $JsonDict.install.displayname = $DisplayName
             $JsonDict.install.displaypublisher = $DisplayPublisher
