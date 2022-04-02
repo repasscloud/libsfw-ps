@@ -7,6 +7,14 @@ function Invoke-OXAppIngest {
     
     begin {
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
+
+        # HKLM Paths
+        [System.Array]$hklmPaths = @(
+            "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+        )
+
+        [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
     }
     
     process {
@@ -19,16 +27,44 @@ function Invoke-OXAppIngest {
             Install-ApplicationPackage -InstallerType exe -PackageName $JsonData.id.uid -FileName $JsonData.meta.filename -InstallSwitches $JsonData.install.installswitches -DLPath $env:TMP
 
             <# VERIFY APPLICATION UNINSTALL #>
+            Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
+
+            <# UNINSTALL FROM DETECTION #>
+            switch ($JsonDict.install.detectmethod)
+            {
+                'Registry'
+                {
+                    <# VERIFY FROM REGISTRY #>
+                    $InstalledBefore = Import-Csv -Path "$env:TMP\CSV_PRE-INSTALL_DUMP.csv" | Select-Object -ExpandProperty DisplayName
+                    $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
+                    foreach ($Install in $InstalledAfter)
+                    {
+                        if ($InstalledBefore -notcontains $Install)
+                        {
+                            <# READ DATA FROM REGISTRY #>
+                            $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
+                            [System.String]$DisplayName = $Mapped.DisplayName
+                            [System.String]$DisplayVersion = $Mapped.DisplayVersion
+                            [System.String]$DisplayPublisher = $Mapped.Publisher
+                            [System.String]$UninstallCmd = $Mapped.UninstallString
+
+                            <# UNINSTALL APPLICATION #>
+                            Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
+                        }
+                        else
+                        {
+                            Write-Output "UNABLE TO MATCH DATA WITH REGISTRY!"
+                        }
+                    }
+                }
+                Default
+                {
+
+                }
+            }
             
         }
-        
-
-        
-
-
-
-
-
+       
         $Body = @{
             id = 0
             uuid = $JsonData.guid
@@ -51,14 +87,14 @@ function Invoke-OXAppIngest {
             installCmd = $JsonData.meta.filename
             installArgs = $JsonData.install.installswitches
             installScript = [System.Stringt]::Empty  # reserved for LoB applications
-            displayName = [System.Stringt]::Empty
-            displayPublisher = [System.Stringt]::Empty
-            displayVersion = [System.Stringt]::Empty
+            displayName = $DisplayName
+            displayPublisher = $DisplayPublisher
+            displayVersion = $DisplayVersion
             packageDetection = $JsonDict.install.detectmethod
             detectScript = [System.Stringt]::Empty  # reserved for LoB applications
             detectValue = $JsonData.install.detectvalue
             uninstallProcess = $JsonData.uninstall.process
-            uninstallCmd = $JsonData.uninstall.string
+            uninstallCmd = $UninstallCmd
             uninstallArgs = $JsonData.uninstall.args
             uninstallScript = [System.Stringt]::Empty  # reserved for LoB applications
             homepage = $JsonData.meta.homepage
@@ -76,7 +112,8 @@ function Invoke-OXAppIngest {
             exploitReportId = 1
         } | ConvertTo-Json
 
-        Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
+        $Body
+        #Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
     }
     
     end {
