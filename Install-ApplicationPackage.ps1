@@ -1,8 +1,8 @@
 function Install-ApplicationPackage {
     [CmdletBinding()]
     param (
-        [System.String]$PackageName,
         [System.String]$InstallerType,
+        [System.String]$PackageName,
         [System.String]$FileName,
         [System.String]$InstallSwitches,
         [System.String]$DLPath
