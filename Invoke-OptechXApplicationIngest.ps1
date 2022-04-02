@@ -13,6 +13,15 @@ function Invoke-OXAppIngest {
 
         $JsonData = Get-Content -Path $JsonPayload | ConvertFrom-Json
 
+        <# INSTALL APPLICATION #>
+        Install-ApplicationPackage -InstallerType exe -PackageName $JsonData.id.uid -FileName $JsonData.meta.filename -InstallSwitches $JsonData.install.installswitches -DLPath $env:TMP
+
+        <# #>
+
+
+
+
+
         $Body = @{
             id = 0
             uuid = $JsonData.guid
