@@ -43,6 +43,7 @@ function Invoke-OXAppIngest {
                     {
                         if ($InstalledBefore -notcontains $Install)
                         {
+                            "FOUND INSTALL: ${Install}"
                             <# READ DATA FROM REGISTRY #>
                             $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
                             [System.String]$env:DisplayName = $Mapped.DisplayName
