@@ -51,6 +51,11 @@ function Invoke-OXAppIngest {
                             [System.String]$env:DisplayPublisher = $Mapped.Publisher
                             [System.String]$env:UninstallCmd = $Mapped.UninstallString
 
+                            $env:DisplayName
+                            $env:DisplayVersion
+                            $env:DisplayPublisher
+                            $env:UninstallCmd
+
                             <# UNINSTALL APPLICATION #>
                             Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
                         }
