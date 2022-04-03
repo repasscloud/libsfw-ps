@@ -83,7 +83,7 @@ function Invoke-OXAppIngest {
         } | ConvertTo-Json
 
         $Body
-        #Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
+        Invoke-RestMethod -Uri "${BaseUri}/api/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
     }
     
     end {
