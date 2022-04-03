@@ -204,7 +204,7 @@ function Export-JsonManifest {
             [System.String]::Empty -notlike $DisplayPublisher -and `
             [System.String]::Empty -notlike $UninstallCmd))
             {
-                #region Install/Uninstall
+                #region INSTALL/UNINSTALL
                 <# INSTALL APPLICATION #>
                 Install-ApplicationPackage -InstallerType exe -PackageName $UID -FileName $FileName -InstallSwitches $InstallArgs -DLPath $env:TMP
 
@@ -253,16 +253,14 @@ function Export-JsonManifest {
                     }
                 }
                 $Count
-                #endregion Install/Uninstall
+                #endregion INSTALL/UNINSTALL
             }
             
 
-            
-
-
+            <# DEFAULT EXPLOIT REPORT ID #>
+            $ExploitReportId = 1
 
             #region BUILD JSON
-            #$JsonDict.id = 0
             $JsonDict.guid = $Guid.ToString()
 
             $JsonDict.id.publisher = $Publisher
@@ -308,7 +306,7 @@ function Export-JsonManifest {
             $JsonDict.uninstall.args = $UninstallArgs
 
             $JsonDict.security.virustotalscanresultsid = $VTScanResultsId
-            $JsonDict.security.exploitreportid = 0
+            $JsonDict.security.exploitreportid = $ExploitReportId
 
             $JsonDict.sysinfo = $SysInfo
 

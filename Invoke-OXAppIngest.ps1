@@ -79,7 +79,7 @@ function Invoke-OXAppIngest {
             enabled = $JsonData.meta.enabled
             dependsOn = $JsonData.meta.dependson
             virusTotalScanResultsId = $JsonData.security.virustotalscanresultsid
-            exploitReportId = 1
+            exploitReportId = $JsonData.security.exploirretportid
         } | ConvertTo-Json
 
         $Body
