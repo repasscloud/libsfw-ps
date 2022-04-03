@@ -21,20 +21,6 @@ function Invoke-OXAppIngest {
 
         $JsonData = Get-Content -Path $JsonPayload | ConvertFrom-Json
 
-        if ($JsonData.install.rebootRequired -eq $false)
-        {
-            <# SET ENV VARIABLES #>
-
-            <# INSTALL APPLICATION #>
-            Install-ApplicationPackage -InstallerType exe -PackageName $JsonData.id.uid -FileName $JsonData.meta.filename -InstallSwitches $JsonData.install.installswitches -DLPath $env:TMP
-
-            <# VERIFY APPLICATION UNINSTALL #>
-            Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
-
-            <# UNINSTALL FROM DETECTION #>
-            
-        }
-       
         $Body = @{
             id = 0
             uuid = $JsonData.guid
