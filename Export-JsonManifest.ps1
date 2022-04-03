@@ -204,6 +204,7 @@ function Export-JsonManifest {
 
             <# VERIFY APPLICATION UNINSTALL #>
             [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
+            [System.String]$CsvPreDump = "$env:TMP\CSV_PRE-INSTALL_DUMP.csv"
             if (Test-Path -Path $CsvInstallDump){ Remove-Item -Path $CsvInstallDump -Confirm:$false -Force }
             Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
             switch ($DetectMethod)
@@ -213,7 +214,7 @@ function Export-JsonManifest {
                     $Count = 0
 
                     <# VERIFY FROM REGISTRY #>
-                    $InstalledBefore = Import-Csv -Path "$env:TMP\CSV_PRE-INSTALL_DUMP.csv" | Select-Object -ExpandProperty DisplayName
+                    $InstalledBefore = Import-Csv -Path $CsvPreDump | Select-Object -ExpandProperty DisplayName
                     $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
                     foreach ($Install in $InstalledAfter)
                     {
@@ -222,7 +223,7 @@ function Export-JsonManifest {
                             "FOUND INSTALL: ${Install}"
                             $Count += 1
                             <# READ DATA FROM REGISTRY #>
-                            $Mapped = Import-Csv -Path C:\Projects\libsfw2\regdata-after-finish.csv | Where-Object -FilterScript {$_.DisplayName -like $Install}
+                            $Mapped = Import-Csv -Path $CsvInstallDump | Where-Object -FilterScript {$_.DisplayName -like $Install}
                             [System.String]$DisplayName = $Mapped.DisplayName
                             [System.String]$DisplayVersion = $Mapped.DisplayVersion
                             [System.String]$DisplayPublisher = $Mapped.Publisher
