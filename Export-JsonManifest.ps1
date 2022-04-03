@@ -198,56 +198,66 @@ function Export-JsonManifest {
             #endregion Security Scans
 
 
-            #region Install/Uninstall
-            <# INSTALL APPLICATION #>
-            Install-ApplicationPackage -InstallerType exe -PackageName $UID -FileName $FileName -InstallSwitches $InstallArgs -DLPath $env:TMP
-
-            <# VERIFY APPLICATION UNINSTALL #>
-            [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
-            [System.String]$CsvPreDump = "$env:TMP\CSV_PRE-INSTALL_DUMP.csv"
-            if (Test-Path -Path $CsvInstallDump){ Remove-Item -Path $CsvInstallDump -Confirm:$false -Force }
-            Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
-            switch ($DetectMethod)
+            # does the application already have the required fields populated? If so, do not install and skip to the end
+            if ([System.String]::Empty -notlike $DisplayName -and `
+            [System.String]::Empty -notlike $DisplayVersion -and `
+            [System.String]::Empty -notlike $DisplayPublisher -and `
+            [System.String]::Empty -notlike $UninstallCmd)
             {
-                'Registry'
+                #region Install/Uninstall
+                <# INSTALL APPLICATION #>
+                Install-ApplicationPackage -InstallerType exe -PackageName $UID -FileName $FileName -InstallSwitches $InstallArgs -DLPath $env:TMP
+
+                <# VERIFY APPLICATION UNINSTALL #>
+                [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
+                [System.String]$CsvPreDump = "$env:TMP\CSV_PRE-INSTALL_DUMP.csv"
+                if (Test-Path -Path $CsvInstallDump){ Remove-Item -Path $CsvInstallDump -Confirm:$false -Force }
+                Get-ChildItem -Path $hklmPaths | Get-ItemProperty | Where-Object -FilterScript {$null -notlike $_.DisplayName} | Export-Csv -Path $CsvInstallDump -NoTypeInformation
+                switch ($DetectMethod)
                 {
-                    $Count = 0
-
-                    <# VERIFY FROM REGISTRY #>
-                    $InstalledBefore = Import-Csv -Path $CsvPreDump | Select-Object -ExpandProperty DisplayName
-                    $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
-                    foreach ($Install in $InstalledAfter)
+                    'Registry'
                     {
-                        if ($InstalledBefore -notcontains $Install)
-                        {
-                            "FOUND INSTALL: ${Install}"
-                            $Count += 1
-                            <# READ DATA FROM REGISTRY #>
-                            $Mapped = Import-Csv -Path $CsvInstallDump | Where-Object -FilterScript {$_.DisplayName -like $Install}
-                            [System.String]$DisplayName = $Mapped.DisplayName
-                            [System.String]$DisplayVersion = $Mapped.DisplayVersion
-                            [System.String]$DisplayPublisher = $Mapped.Publisher
-                            [System.String]$UninstallCmd = $Mapped.UninstallString
-                            $DisplayName
-                            $DisplayVersion
-                            $DisplayPublisher
-                            $UninstallCmd
+                        $Count = 0
 
-                            # <# UNINSTALL APPLICATION #>
-                            # Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
-                        }
-                        else
+                        <# VERIFY FROM REGISTRY #>
+                        $InstalledBefore = Import-Csv -Path $CsvPreDump | Select-Object -ExpandProperty DisplayName
+                        $InstalledAfter = Import-Csv -Path $CsvInstallDump | Select-Object -ExpandProperty DisplayName
+                        foreach ($Install in $InstalledAfter)
                         {
+                            if ($InstalledBefore -notcontains $Install)
+                            {
+                                "FOUND INSTALL: ${Install}"
+                                $Count += 1
+                                <# READ DATA FROM REGISTRY #>
+                                $Mapped = Import-Csv -Path $CsvInstallDump | Where-Object -FilterScript {$_.DisplayName -like $Install}
+                                [System.String]$DisplayName = $Mapped.DisplayName
+                                [System.String]$DisplayVersion = $Mapped.DisplayVersion
+                                [System.String]$DisplayPublisher = $Mapped.Publisher
+                                [System.String]$UninstallCmd = $Mapped.UninstallString
+                                $DisplayName
+                                $DisplayVersion
+                                $DisplayPublisher
+                                $UninstallCmd
+
+                                # <# UNINSTALL APPLICATION #>
+                                # Uninstall-ApplicationPackage -UninstallClass $JsonData.uninstall.process -UninstallString $UninstallCmd -UninstallArgs $JsonData.uninstall.args -DisplayName $DisplayName -RebootRequired "N"
+                            }
+                            else
+                            {
+                            }
                         }
                     }
+                    Default
+                    {
+                        "Did not match 'Registry'"
+                    }
                 }
-                Default
-                {
-                    "Did not match 'Registry'"
-                }
+                $Count
+                #endregion Install/Uninstall
             }
-            $Count
-            #endregion Instal/Uninstall
+            
+
+            
 
 
 
