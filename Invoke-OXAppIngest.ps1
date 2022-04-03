@@ -7,14 +7,6 @@ function Invoke-OXAppIngest {
     
     begin {
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
-
-        # HKLM Paths
-        [System.Array]$hklmPaths = @(
-            "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
-            "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
-        )
-
-        [System.String]$CsvInstallDump = "$env:TMP\CSV_INSTALL_DUMP.csv"
     }
     
     process {
@@ -65,7 +57,7 @@ function Invoke-OXAppIngest {
             enabled = $JsonData.meta.enabled
             dependsOn = $JsonData.meta.dependson
             virusTotalScanResultsId = $JsonData.security.virustotalscanresultsid
-            exploitReportId = $JsonData.security.exploirretportid
+            exploitReportId = 1
         } | ConvertTo-Json
 
         $Body
