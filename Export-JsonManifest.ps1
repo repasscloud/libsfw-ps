@@ -199,10 +199,10 @@ function Export-JsonManifest {
 
 
             # does the application already have the required fields populated? If so, do not install and skip to the end
-            if ([System.String]::Empty -notlike $DisplayName -and `
+            if (-not([System.String]::Empty -notlike $DisplayName -and `
             [System.String]::Empty -notlike $DisplayVersion -and `
             [System.String]::Empty -notlike $DisplayPublisher -and `
-            [System.String]::Empty -notlike $UninstallCmd)
+            [System.String]::Empty -notlike $UninstallCmd))
             {
                 #region Install/Uninstall
                 <# INSTALL APPLICATION #>
