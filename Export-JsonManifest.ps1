@@ -304,7 +304,7 @@ function Export-JsonManifest {
             $JsonDict.install.detectvalue = $DetectValue
             
             $JsonDict.uninstall.process = $UninstallProcess
-            $JsonDict.uninstall.string = $UninstallString
+            $JsonDict.uninstall.cmd = $UninstallCmd
             $JsonDict.uninstall.args = $UninstallArgs
 
             $JsonDict.security.virustotalscanresultsid = $VTScanResultsId
