@@ -227,7 +227,6 @@ function Export-JsonManifest {
                             [System.String]$DisplayVersion = $Mapped.DisplayVersion
                             [System.String]$DisplayPublisher = $Mapped.Publisher
                             [System.String]$UninstallCmd = $Mapped.UninstallString
-
                             $DisplayName
                             $DisplayVersion
                             $DisplayPublisher
