@@ -38,7 +38,7 @@ function Invoke-OXAppIngest {
             displayName = $JsonData.install.displayname
             displayPublisher = $JsonData.install.displaypublisher
             displayVersion = $JsonData.install.displayversion
-            packageDetection = $JsonDict.install.detectmethod
+            packageDetection = $JsonData.install.detectmethod
             detectScript = [System.String]::Empty  # reserved for LoB applications
             detectValue = $JsonData.install.detectvalue
             uninstallProcess = $JsonData.uninstall.process
