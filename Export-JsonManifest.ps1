@@ -311,7 +311,7 @@ function Export-JsonManifest {
             $JsonDict.sysinfo = $SysInfo
 
             $OutFilePath = Join-Path -Path $OutPath -ChildPath "${UID}.json".Replace('::','_')
-            $JsonDict | ConvertTo-Json -Depth 4 | Set-Content -Path $OutFilePath -Encoding utf8NoBOM -Confirm:$false -Force    # -FilePath $OutFilePath -Encoding utf8NoBOM -Force -Confirm:$false
+            $JsonDict | ConvertTo-Json -Depth 4 | Out-File -FilePath $OutFilePath -Encoding utf8 -Force -Confirm:$false #Set-Content -Path $OutFilePath -Encoding utf8 -Confirm:$false -Force
             Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) JSON MANIFEST OUTPUT: [ ${OutFilePath} ]"
             #endregion BUILD JSON
 
