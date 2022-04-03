@@ -30,7 +30,6 @@ function Get-RegistrySource {
                     $reg_src_lookup
                 }
             }
-
             exit 1
         }
 

@@ -17,24 +17,27 @@ function Add-ExecToRepo {
         [System.String]$DLPath
     )
     
-    begin {
+    begin
+    {
         if ($env:PATH.Split(';') -notcontains 'C:\mc\bin') { $env:PATH += ';C:\mc\bin' }
     }
     
-    process {
+    process
+    {
         [System.String]$download_path = Join-Path -Path $DLPath -ChildPath $Upload
 
         switch ($XFT)
         {
-            'mc' {
-                
+            'mc'
+            {
                 (mc cp "${download_path}" $Locality/$Uri) 2>&1>$null
                 Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E1")) PAVCKAGE UPLOADED VIA: mc"
             }
         }
     }
     
-    end {
+    end
+    {
         try
         {
             Remove-Item -Path $download_path -Confirm:$false -Force -ErrorAction Stop
