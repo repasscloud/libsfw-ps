@@ -35,7 +35,7 @@ function Export-JsonManifest {
         
         
         [ValidateSet("Registry","FileVersion","File","Script","Void")]
-            [System.String]$DetectMethod="Registry",                                            # how is app detected (registry, fileversion, filematched, script)
+            [System.String]$DetectMethod,                                                       # how is app detected (registry, fileversion, filematched, script)
         [System.String]$DetectValue=[System.String]::Empty,                                     # the value for the DetectMethod, not compatible with DetectScript
         [System.String]$DetectScript=[System.String]::Empty,                                    # script to detect application, used for LoB apps
 
