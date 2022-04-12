@@ -1,0 +1,21 @@
+$Body = @{
+    'id' = 0
+    'uuid' = $([System.Guid]::NewGuid())
+    'uid' = "adobe::acrobatreaderdc::22.001.20085"
+    'applicationCategory' = "Productivity"
+    'publisher' = "Adobe"
+    'name' = "Acrobat Reader DC"
+    'version' = "22.001.20085"
+    'copyright' = ""
+    'licenseAcceptRequired' = $true
+    'lcid' = @("MUI")
+    'cpuArch' = @("x64", "x86")
+    'homepage' = "https://www.adobe.com/products/reader.html"
+    'icon' = "https://cdn.jsdelivr.net/gh/open-circle-ltd/chocolatey.adobe-acrobat-reader-dc@c664e708a2c812f1da6cf3ef26f03fe56341dcc7/icon/adobe-acrobat-reader-dc.png"
+    'docs' = "https://helpx.adobe.com/reader.html"
+    'license' = "http://www.adobe.com/products/eulas/pdfs/Reader10_combined-20100625_1419.pdf"
+    'tags' = @("adobereader","adobe","acrobat","reader","DC","pdf","MUI","multilanguage")
+    'summary' = "View, print, sign, and annotate PDF files"
+    'enabled' = $true
+    'lastUpdate' = $((Get-Date).ToString('yyyyMMdd'))
+} | ConvertTo-Json
