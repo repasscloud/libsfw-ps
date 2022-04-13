@@ -18,6 +18,7 @@ function Get-RedirectedUri {
         [System.String]$Uri
     )
     process {
+        $ErrorActionPreference="Stop"
         do {
             try {
                 $request = Invoke-WebRequest -Method Head -Uri $Uri
@@ -38,7 +39,8 @@ function Get-RedirectedUri {
                     $retry = $true
                 }
                 else {
-                    throw $_
+                    #throw $_
+                    return "INVALID"
                 }
             }
         } while ($retry)
