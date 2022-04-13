@@ -22,11 +22,11 @@ function Get-RedirectedUri {
         do {
             try {
                 $request = Invoke-WebRequest -Method Head -Uri $Uri
-                if ($request.BaseResponse.ResponseUri -ne $null) {
+                if ($null -ne $request.BaseResponse.ResponseUri) {
                     # This is for Powershell 5
                     $redirectUri = $request.BaseResponse.ResponseUri.AbsoluteUri
                 }
-                elseif ($request.BaseResponse.RequestMessage.RequestUri -ne $null) {
+                elseif ($null -ne $request.BaseResponse.RequestMessage.RequestUri) {
                     # This is for Powershell core
                     $redirectUri = $request.BaseResponse.RequestMessage.RequestUri.AbsoluteUri
                 }
