@@ -11,12 +11,20 @@ function Get-AbsoluteUri {
     }
     process
     {
+        $ErrorActionPreference = "Stop"
         $WebRequestQuery = [System.Net.HttpWebRequest]::Create($Uri)
         $WebRequestQuery.Method = "HEAD"
-        $ResponseValue = $WebRequestQuery.GetResponse()
-        $ResponseUri = $ResponseValue.ResponseUri
-        $FoundUri = $ResponseUri.AbsoluteUri
-        $ReturnValue = [System.Web.HttpUtility]::UrlDecode($FoundUri)
+        try {
+            $ResponseValue = $WebRequestQuery.GetResponse()
+            $ResponseUri = $ResponseValue.ResponseUri
+            $FoundUri = $ResponseUri.AbsoluteUri
+            $ReturnValue = [System.Web.HttpUtility]::UrlDecode($FoundUri)
+            
+        }
+        catch {
+            $ReturnValue = "INVALID"    
+        }
+
         return $ReturnValue
     }
     end
