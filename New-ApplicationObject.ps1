@@ -139,12 +139,14 @@ function New-ApplicationObject {
                 summary = $Summary
                 enabled = $Enabled
             } | ConvertTo-Json
-            $Body
+
+            <# EXPORT PAYLOAD #>
+            Write-Output $Body
 
             <# POST OBJECT INTO API DB #>
             try
             {
-                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}" -Method Post -UseBasicParsing -Body $Body -ContentType 'application/json' -ErrorAction Stop
+                Invoke-RestMethod -Uri "https://engine.api.dev.optechx-data.com/v1/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -Headers @{accept="text/plain"} -ErrorAction Stop
                 return 0
             }
             catch
