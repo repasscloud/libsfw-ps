@@ -146,7 +146,7 @@ function New-ApplicationObject {
             <# POST OBJECT INTO API DB #>
             try
             {
-                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}" -Method Post -UseBasicParsing -Body $ApiDataObj -ContentType "application/json" -ErrorAction Stop
+                #Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}" -Method Post -UseBasicParsing -Body $ApiDataObj -ContentType "application/json" -ErrorAction Stop
                 return 0
             }
             catch
