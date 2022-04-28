@@ -81,7 +81,68 @@ function New-ApplicationObject {
         {
             Invoke-RestMethod -Uri "${API_URI}/${APP_UID_ROUTE}/${UID}" -Method Get -Headers $CHeaders -ErrorAction Stop | Out-Null
             Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E2")) APPLICATION MATCHED: [ ${UID} ]"
-            # go to end, nothing left to do, well, there is ~> have to create the child object now
+            
+            <# APPLICATION WAS MATCHED, INGEST NEW DATA FIELDS #>
+            $RecordFound = Invoke-RestMethod -Uri "${API_URI}/${APP_UID_ROUTE}/${UID}" -Method Get -Headers $CHeaders
+            [System.In64]$Id = $RecordFound.id
+
+            <# LCID #>
+            if (@($RecordFound.lcid) -notcontains $Lcid)
+            {
+                $newArray = @($RecordFound.lcid) + $Lcid
+                $Body = @{
+                    id = $env:VSCODE_GIT_IPC_HANDLE
+                    uuid = $RecordFound.uuid
+                    uid = $RecordFound.uid
+                    lastUpdate = $RecordFound.lastupdate
+                    applicationCategory = $RecordFound.applicationcategory
+                    publisher = $RecordFound.publisher
+                    name = $RecordFound.name
+                    version = $RecordFound.version
+                    copyright = $RecordFound.copyright
+                    licenseAcceptRequired = [System.Boolean]::Parse($RecordFound.licenseacceptrequired)
+                    lcid = $newArray
+                    cpuArch = @($RecordFound.cpuarch)
+                    homepage = $RecordFound.homepage
+                    icon = $RecordFound.iconuri
+                    docs = $RecordFound.docs
+                    license = $RecordFound.license
+                    tags = @($RecordFound.tags)
+                    summary = $RecordFound.summary
+                    enabled = [System.Boolean]::Parse($RecordFound.enabled)
+                } | ConvertTo-Json
+                Write-Output "<| Test Lcid"
+                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}/${Id}" -Method Put -UseBasicParsing -Body $Body -ContentType 'application/json'
+            }
+
+            <# ARCH #>
+            if (@($RecordFound.lcid) -notcontains $Lcid)
+            {
+                $newArray = @($RecordFound.arch) + $CpuArch
+                $Body = @{
+                    id = $env:VSCODE_GIT_IPC_HANDLE
+                    uuid = $RecordFound.uuid
+                    uid = $RecordFound.uid
+                    lastUpdate = $RecordFound.lastupdate
+                    applicationCategory = $RecordFound.applicationcategory
+                    publisher = $RecordFound.publisher
+                    name = $RecordFound.name
+                    version = $RecordFound.version
+                    copyright = $RecordFound.copyright
+                    licenseAcceptRequired = [System.Boolean]::Parse($RecordFound.licenseacceptrequired)
+                    lcid = @($RecordFound.lcid)
+                    cpuArch = $newArray
+                    homepage = $RecordFound.homepage
+                    icon = $RecordFound.iconuri
+                    docs = $RecordFound.docs
+                    license = $RecordFound.license
+                    tags = @($RecordFound.tags)
+                    summary = $RecordFound.summary
+                    enabled = [System.Boolean]::Parse($RecordFound.enabled)
+                } | ConvertTo-Json
+                Write-Output "<| Test Arch"
+                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}/${Id}" -Method Put -UseBasicParsing -Body $Body -ContentType 'application/json'
+            }
         }
         catch
         {
