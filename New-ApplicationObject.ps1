@@ -73,7 +73,10 @@ function New-ApplicationObject {
         [System.Guid]$UUID = [System.Guid]::NewGuid()
 
         <# VERIFY UID AGAINST API PARENT OBJECT ELSE CREATE #>
-        $CHeaders = @{accept = 'text/json'}
+        $CHeaders = @{
+            "accept" = 'text/json'
+            "Content-Type" = 'application/json'
+        }
         try
         {
             Invoke-RestMethod -Uri "${API_URI}/${APP_UID_ROUTE}/${UID}" -Method Get -Headers $CHeaders -ErrorAction Stop | Out-Null
@@ -120,7 +123,7 @@ function New-ApplicationObject {
             <# CREATE JSON PAYLOAD OBJECT #>
             $Body = @{
                 id = 0
-                uuid = [System.Guid]::NewGuid().Guid.ToString()
+                uuid = $UUID
                 uid = $UID
                 lastUpdate = (Get-Date).ToString("yyyyMMdd")
                 applicationCategory = $ApplicationCategory
@@ -146,7 +149,7 @@ function New-ApplicationObject {
             <# POST OBJECT INTO API DB #>
             try
             {
-                Invoke-RestMethod -Uri "https://engine.api.dev.optechx-data.com/v1/Application" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -Headers @{accept="text/plain"} -ErrorAction Stop
+                Invoke-RestMethod -Uri "https://engine.api.dev.optechx-data.com/v1/Application" -Method Post -Body $Body -ContentType "application/json" -Headers $CHeaders -ErrorAction Stop
                 return 0
             }
             catch
