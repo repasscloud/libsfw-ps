@@ -117,36 +117,34 @@ function New-ApplicationObject {
                 Write-Output "$([System.Char]::ConvertFromUTF32("0x1F7E0")) NUSPEC NOT PROVIDED"
             }<# END NUSPEC FILE INGEST #>
 
-            $ApiDataObj = [System.Collections.Specialized.OrderedDictionary]@{}
-
-            <# GH JSON OBJECT ADD DATA #>
-            $ApiDataObj.id = 0
-            $ApiDataObj.uuid = $UUID
-            $ApiDataObj.uid = $UID
-            $ApiDataObj.lastUpdate = $((Get-Date).ToString('yyyyMMdd'))
-            $ApiDataObj.applicationCategory = $Category
-            $ApiDataObj.publisher = $Publisher
-            $ApiDataObj.name = $Name
-            $ApiDataObj.version = $Version
-            $ApiDataObj.copyright = $Copyright
-            $ApiDataObj.licenseAcceptRequired = $LicenseAcceptRequired
-            $ApiDataObj.lcid = $Lcid
-            $ApiDataObj.cpuArch = $CpuArch
-            $ApiDataObj.homepage = $Homepage
-            $ApiDataObj.icon = $IconUri
-            $ApiDataObj.docs = $Docs
-            $ApiDataObj.license = $License
-            $ApiDataObj.tags = $Tags
-            $ApiDataObj.summary = $Summary
-            $ApiDataObj.enabled = $true
-            
-            <# CONVERT DICTIONARY TO JSON OBJECT #>
-            $Body = $ApiDataObj | ConvertTo-Json
+            <# CREATE JSON PAYLOAD OBJECT #>
+            $Body = @{
+                id = 0
+                uuid = [System.Guid]::NewGuid().Guid.ToString()
+                uid = $UID
+                lastUpdate = (Get-Date).ToString("yyyyMMdd")
+                applicationCategory = $ApplicationCategory
+                publisher = $Publisher
+                name = $Name
+                version = $Version
+                copyright = $Copyright
+                licenseAcceptRequired = $LicenseAcceptRequired
+                lcid = @($Lcid)
+                cpuArch = @($CpuArch)
+                homepage = $Homepage
+                icon = $IconUri
+                docs = $Docs
+                license = $License
+                tags = @($Tags)
+                summary = $Summary
+                enabled = $Enabled
+            } | ConvertTo-Json
+            $Body
 
             <# POST OBJECT INTO API DB #>
             try
             {
-                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}" -Method Post -UseBasicParsing -Body $Body -ContentType "application/json" -ErrorAction Stop
+                Invoke-RestMethod -Uri "${API_URI}/${APP_ROUTE}" -Method Post -UseBasicParsing -Body $Body -ContentType 'application/json' -ErrorAction Stop
                 return 0
             }
             catch
